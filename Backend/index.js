@@ -26,7 +26,7 @@ import { initSocket } from "./socket.js";
 
 // Load environment variables
 dotenv.config();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // Create Express app and HTTP server
 const app = express();
