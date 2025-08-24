@@ -5,7 +5,7 @@ import axios from "axios";
 
 // create axios instance WITHOUT a static Authorization header
 const axiosInstance = axios.create({
-  baseURL: "https://cryptolance-server.onrender.com/api",
+  baseURL: "http://localhost:3001/api",
   headers: {
     "Content-Type": "application/json",
   },

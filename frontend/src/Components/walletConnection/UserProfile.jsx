@@ -71,8 +71,8 @@ function UserProfile({ token, userExists, user, address, onProfileUpdate }) {
     e.preventDefault();
     try {
       const url = userExists
-        ? `https://cryptolance-server.onrender.com/api/users/${user._id}`
-        : "https://cryptolance-server.onrender.com/api/users";
+        ? `http://localhost:3001/api/users/${user._id}`
+        : "http://localhost:3001/api/users";
       const method = userExists ? "PUT" : "POST";
 
       const response = await fetch(url, {

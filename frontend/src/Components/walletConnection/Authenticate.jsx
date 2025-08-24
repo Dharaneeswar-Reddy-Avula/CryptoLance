@@ -14,7 +14,7 @@ function Authenticate({ onAuthSuccess }) {
 
     try {
       const nonceResponse = await fetch(
-        "https://cryptolance-server.onrender.com/api/auth/get-nonce",
+        "http://localhost:3001/api/auth/get-nonce",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -30,7 +30,7 @@ function Authenticate({ onAuthSuccess }) {
       const signature = await signMessageAsync({ message: nonce });
 
       const verifyResponse = await fetch(
-        "https://cryptolance-server.onrender.com/api/auth/verify",
+        "http://localhost:3001/api/auth/verify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

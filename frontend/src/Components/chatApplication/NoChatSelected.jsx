@@ -34,7 +34,7 @@ const NoChatSelected = () => {
         {/* Enhanced Welcome Text */}
         <div className="space-y-4">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Welcome to NeonChat
+            Welcome to CrytoLance
           </h2>
           <p className="text-lg text-slate-300 leading-relaxed">
             Select a conversation from the sidebar to start your
@@ -43,7 +43,7 @@ const NoChatSelected = () => {
         </div>
         
         {/* Feature highlights */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
           <div className="p-4 rounded-xl bg-slate-800/40 border border-cyan-400/20 backdrop-blur-sm">
             <div className="w-8 h-8 bg-cyan-400/20 rounded-lg flex items-center justify-center mx-auto mb-2">
               <MessageSquare className="w-4 h-4 text-cyan-400" />
@@ -58,12 +58,12 @@ const NoChatSelected = () => {
             <p className="text-sm text-slate-400">Online presence</p>
           </div>
           
-          <div className="p-4 rounded-xl bg-slate-800/40 border border-pink-400/20 backdrop-blur-sm">
+          {/* <div className="p-4 rounded-xl bg-slate-800/40 border border-pink-400/20 backdrop-blur-sm">
             <div className="w-8 h-8 bg-pink-400/20 rounded-lg flex items-center justify-center mx-auto mb-2">
               <Sparkles className="w-4 h-4 text-pink-400" />
             </div>
             <p className="text-sm text-slate-400">Modern design</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

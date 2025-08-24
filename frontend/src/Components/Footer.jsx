@@ -36,7 +36,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative w-full  py-8 px-4 overflow-hidden">
+    <footer className="relative w-full  py-8 px-4 overflow-hidden z-50">
       {/* Wavy decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/8 rounded-full blur-2xl"></div>

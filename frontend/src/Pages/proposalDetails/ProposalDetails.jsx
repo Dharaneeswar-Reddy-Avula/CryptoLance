@@ -107,7 +107,7 @@ export default function ProposalDetails({ job, onBack }) {
 
       // Otherwise fetch from API
       const response = await fetch(
-        `https://cryptolance-server.onrender.com/api/proposals/${id}`
+        `http://localhost:3001/api/proposals/${id}`
       );
 
       if (!response.ok) {

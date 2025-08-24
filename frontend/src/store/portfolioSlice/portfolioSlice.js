@@ -74,7 +74,7 @@ export const fetchPortfolio = createAsyncThunk(
       }
 
       const response = await axios.get(
-        "https://cryptolance-server.onrender.com/api/portfolio/me",
+        "http://localhost:3001/api/portfolio/me",
         {
           headers: {
             "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export const fetchGigs = createAsyncThunk(
     try {
       const API_BASE =
         process.env.REACT_APP_API_BASE ||
-        "https://cryptolance-server.onrender.com";
+        "http://localhost:3001";
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("No auth token found. Please log in.");
@@ -170,7 +170,7 @@ export const createPortfolio = createAsyncThunk(
       };
 
       const response = await axios.post(
-        "https://cryptolance-server.onrender.com/api/portfolio/otp/send",
+        "http://localhost:3001/api/portfolio/otp/send",
         cleanedFormData,
         {
           headers: {
@@ -208,7 +208,7 @@ export const updatePortfolio = createAsyncThunk(
       }
 
       const response = await axios.put(
-        `https://cryptolance-server.onrender.com/api/portfolio`,
+        `http://localhost:3001/api/portfolio`,
         data,
         {
           headers: {
@@ -252,7 +252,7 @@ export const verifyOtp = createAsyncThunk(
       }
 
       const response = await axios.post(
-        "https://cryptolance-server.onrender.com/api/portfolio/otp/verify",
+        "http://localhost:3001/api/portfolio/otp/verify",
         { email: state.email, otp: otpString, portfolioId },
         {
           headers: {
@@ -294,7 +294,7 @@ export const resendOtp = createAsyncThunk(
       }
 
       const response = await axios.post(
-        "https://cryptolance-server.onrender.com/api/portfolio/otp/resend",
+        "http://localhost:3001/api/portfolio/otp/resend",
         { email: state.email, portfolioId },
         {
           headers: {

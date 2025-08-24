@@ -204,7 +204,7 @@ export default function Proposal() {
       console.log("Using auth token:", authToken ? "Token exists" : "No token");
 
       // Try both relative and absolute URLs
-      const apiUrl = "https://cryptolance-server.onrender.com";
+      const apiUrl = "http://localhost:3001";
       const endpoint = `${apiUrl}/api/proposals`;
 
       console.log("Making request to:", endpoint);
@@ -307,7 +307,7 @@ export default function Proposal() {
 
   // const fetchProposals = async () => {
   //   try {
-  //     const res = await fetch("https://cryptolance-server.onrender.com/api/proposals");
+  //     const res = await fetch("http://localhost:3001/api/proposals");
   //     const data = await res.json();
   //     setProposals(data);
   //   } catch (err) {

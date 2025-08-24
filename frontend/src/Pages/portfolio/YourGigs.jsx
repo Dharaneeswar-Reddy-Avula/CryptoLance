@@ -10,7 +10,7 @@ const YourGigs = ({ yourgigs = [] }) => {
   const [error, setError] = useState(null);
 
   const API_BASE =
-    process.env.REACT_APP_API_BASE || "https://cryptolance-server.onrender.com";
+    process.env.REACT_APP_API_BASE || "http://localhost:3001";
 
   useEffect(() => {
     // If no IDs, clear state and exit early

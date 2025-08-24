@@ -109,7 +109,7 @@ export default function CreateProposalCard({
             if (!dbId) return;
             const token = localStorage.getItem("authToken");
             const res = await fetch(
-              `https://cryptolance-server.onrender.com/api/proposals/${dbId}/proposalId`,
+              `http://localhost:3001/api/proposals/${dbId}/proposalId`,
               {
                 method: "PATCH",
                 headers: {

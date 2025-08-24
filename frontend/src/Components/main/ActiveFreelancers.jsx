@@ -14,7 +14,7 @@ export default function ActiveFreelancers() {
     const fetchFreelancers = async () => {
       try {
         const response = await fetch(
-          "https://cryptolance-server.onrender.com/api/activeFreelancers"
+          "http://localhost:3001/api/activeFreelancers"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch freelancers");
