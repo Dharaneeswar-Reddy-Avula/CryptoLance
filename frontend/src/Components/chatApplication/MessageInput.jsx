@@ -1,42 +1,41 @@
-import { useRef, useState } from "react";
-import { Image, Send, X } from "lucide-react";
-import toast from "react-hot-toast";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  sendMessage,
-  addMessageOptimistically,
-} from "../../store/ChatApplicationSlice/ChatAppSlice";
+"use client"
+
+import { useRef, useState } from "react"
+import { Send, Smile, Paperclip, X } from "lucide-react"
+import toast from "react-hot-toast"
+import { useSelector, useDispatch } from "react-redux"
+import { sendMessage, addMessageOptimistically } from "../../store/ChatApplicationSlice/ChatAppSlice"
 
 const MessageInput = () => {
-  const [text, setText] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef = useRef(null);
-  const dispatch = useDispatch();
-  const { selectedUser } = useSelector((state) => state.chatApp);
-  const { user: authUser } = useSelector((state) => state.auth);
+  const [text, setText] = useState("")
+  const [imagePreview, setImagePreview] = useState(null)
+  const fileInputRef = useRef(null)
+  const dispatch = useDispatch()
+  const { selectedUser } = useSelector((state) => state.chatApp)
+  const { user: authUser } = useSelector((state) => state.auth)
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
+      toast.error("Please select an image file")
+      return
     }
 
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
+      setImagePreview(reader.result)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const removeImage = () => {
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+    setImagePreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
 
   const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!text.trim() && !imagePreview) return;
+    e.preventDefault()
+    if (!text.trim() && !imagePreview) return
 
     try {
       // Create optimistic message
@@ -48,15 +47,15 @@ const MessageInput = () => {
         recieverId: selectedUser._id,
         createdAt: new Date().toISOString(),
         __optimistic: true, // Mark as optimistic
-      };
+      }
 
       // Add message immediately to UI (optimistic update)
-      dispatch(addMessageOptimistically(optimisticMessage));
+      dispatch(addMessageOptimistically(optimisticMessage))
 
       // Clear form immediately
-      setText("");
-      setImagePreview(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      setText("")
+      setImagePreview(null)
+      if (fileInputRef.current) fileInputRef.current.value = ""
 
       // Send message to backend
       await dispatch(
@@ -66,29 +65,29 @@ const MessageInput = () => {
             text: text.trim(),
             image: imagePreview,
           },
-        })
-      );
+        }),
+      )
     } catch (error) {
-      console.error("Failed to send message:", error);
+      console.error("Failed to send message:", error)
       // Optionally remove the optimistic message on error
       // dispatch(removeOptimisticMessage(optimisticMessage._id));
     }
-  };
+  }
 
   return (
-    <div className="p-4 w-full bg-slate-800/50 backdrop-blur-sm border-t border-cyan-400/30">
+    <div className="p-3 bg-slate-800/70 backdrop-blur-sm border-t border-cyan-500/20">
       {imagePreview && (
-        <div className="mb-4 flex items-center gap-3">
+        <div className="mb-3 flex items-center gap-2">
           <div className="relative group">
             <img
-              src={imagePreview}
+              src={imagePreview || "/placeholder.svg"}
               alt="Preview"
-              className="w-20 h-20 object-cover rounded-xl border-2 border-cyan-400/30 shadow-lg"
+              className="w-16 h-16 object-cover rounded-lg border border-cyan-500/30"
             />
             <button
               onClick={removeImage}
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500/80 hover:bg-red-500 border-2 border-slate-800
-              flex items-center justify-center text-white transition-all duration-200 opacity-0 group-hover:opacity-100"
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 
+              flex items-center justify-center text-white transition-colors text-xs"
               type="button"
             >
               <X className="size-3" />
@@ -97,56 +96,45 @@ const MessageInput = () => {
         </div>
       )}
 
-      <form onSubmit={handleSendMessage} className="flex items-center gap-3">
-        <div className="flex-1 flex gap-3 items-center">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              className="w-full px-4 py-3 rounded-2xl bg-slate-700/50 border-2 border-slate-600/50 text-white placeholder-slate-400 
-                       focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300
-                       backdrop-blur-sm"
-              placeholder="Type your message..."
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            />
-            {/* Subtle neon glow on focus */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400/10 to-purple-400/10 opacity-0 focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-          </div>
+      <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+        <div className="flex-1 flex gap-2 items-center bg-slate-700/50 rounded-full px-3 py-2 border border-slate-600/50 focus-within:border-cyan-500/50 transition-colors">
+          <button
+            type="button"
+            className="p-1 rounded-full hover:bg-slate-600/50 text-slate-400 hover:text-cyan-400 transition-colors"
+          >
+            <Smile className="size-4" />
+          </button>
 
           <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleImageChange}
+            type="text"
+            className="flex-1 bg-transparent text-white placeholder-slate-400 focus:outline-none text-sm"
+            placeholder="Type a message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
+
+          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} />
 
           <button
             type="button"
-            className={`p-3 rounded-xl transition-all duration-300 border-2 backdrop-blur-sm ${
-              imagePreview
-                ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-400 hover:bg-emerald-500/30"
-                : "bg-slate-700/50 border-slate-600/50 text-slate-400 hover:border-cyan-400/50 hover:text-cyan-400 hover:bg-cyan-400/10"
-            }`}
+            className="p-1 rounded-full hover:bg-slate-600/50 text-slate-400 hover:text-cyan-400 transition-colors"
             onClick={() => fileInputRef.current?.click()}
           >
-            <Image size={20} />
+            <Paperclip className="size-4" />
           </button>
         </div>
 
         <button
           type="submit"
-          className="p-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg 
-                   hover:from-cyan-400 hover:to-purple-400 disabled:from-slate-600 disabled:to-slate-600 
-                   disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95
-                   disabled:transform-none"
+          className="p-2 rounded-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 
+                   disabled:cursor-not-allowed transition-colors text-white"
           disabled={!text.trim() && !imagePreview}
         >
-          <Send size={20} />
+          <Send className="size-4" />
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default MessageInput;
+export default MessageInput
