@@ -44,6 +44,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "https://crypto-lance-gamma.vercel.app",
+      "https://crypto-lance-seven.vercel.app",
     ],
     credentials: true, // if you want to allow cookies/auth headers
   })
