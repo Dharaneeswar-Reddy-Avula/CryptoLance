@@ -30,7 +30,7 @@ const AcceptedProposals = () => {
       const token = localStorage.getItem("authToken");
 
       const res = await fetch(
-        "http://localhost:3001/api/proposals/user/accepted-proposals",
+        "https://cryptolance-qgzz.onrender.com/api/proposals/user/accepted-proposals",
         {
           method: "GET",
           headers: token ? { Authorization: `Bearer ${token}` } : {},

@@ -169,7 +169,7 @@ function WalletConnect({ onAuthSuccess }) {
       try {
         console.log("Getting nonce for address:", address);
         const nonceResponse = await fetch(
-          "http://localhost:3001/api/auth/get-nonce",
+          "https://cryptolance-qgzz.onrender.com/api/auth/get-nonce",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

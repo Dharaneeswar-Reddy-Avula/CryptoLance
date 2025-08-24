@@ -98,7 +98,7 @@ export default function Navbar() {
       if (!token) return;
 
       const response = await fetch(
-        `http://localhost:3001/api/hftToken/userHFTtokenDetails/${address}`,
+        `https://cryptolance-qgzz.onrender.com/api/hftToken/userHFTtokenDetails/${address}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -321,7 +321,7 @@ export default function Navbar() {
       }
 
       const res = await fetch(
-        "http://localhost:3001/api/portfolio/me",
+        "https://cryptolance-qgzz.onrender.com/api/portfolio/me",
         {
           method: "GET",
           headers: {

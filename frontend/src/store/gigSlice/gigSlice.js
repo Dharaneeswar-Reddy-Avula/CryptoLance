@@ -48,7 +48,7 @@ export const fetchGig = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(
-        `http://localhost:3001/api/gigs/${id}`
+        `https://cryptolance-qgzz.onrender.com/api/gigs/${id}`
       );
       return data;
     } catch (err) {
@@ -62,7 +62,7 @@ export const fetchGigs = createAsyncThunk(
   async (filters = {}, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams(filters).toString();
-      const url = `http://localhost:3001/api/gigs${
+      const url = `https://cryptolance-qgzz.onrender.com/api/gigs${
         params ? `?${params}` : ""
       }`;
       const { data } = await axios.get(url);
@@ -105,7 +105,7 @@ export const submitGig = createAsyncThunk(
       );
 
       const { data } = await axios.post(
-        "http://localhost:3001/api/gigs",
+        "https://cryptolance-qgzz.onrender.com/api/gigs",
         payload,
         {
           headers: {
@@ -157,7 +157,7 @@ export const updateGig = createAsyncThunk(
       );
 
       const { data } = await axios.put(
-        `http://localhost:3001/api/gigs/${id}`,
+        `https://cryptolance-qgzz.onrender.com/api/gigs/${id}`,
         payload,
         {
           headers: {

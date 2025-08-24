@@ -42,11 +42,11 @@ const BiddedProposals = () => {
       const token = localStorage.getItem("authToken");
       console.log(
         "Fetching from:",
-        `http://localhost:3001/api/proposals/userBids/${address.toLowerCase()}`
+        `https://cryptolance-qgzz.onrender.com/api/proposals/userBids/${address.toLowerCase()}`
       );
 
       const res = await fetch(
-        `http://localhost:3001/api/proposals/userBids/${address.toLowerCase()}`,
+        `https://cryptolance-qgzz.onrender.com/api/proposals/userBids/${address.toLowerCase()}`,
         {
           method: "GET",
           headers: token ? { Authorization: `Bearer ${token}` } : {},

@@ -26,16 +26,16 @@ const Dashboard = () => {
           treasuryRes,
         ] = await Promise.all([
           fetch(
-            "http://localhost:3001/api/admin/escrow-data"
+            "https://cryptolance-qgzz.onrender.com/api/admin/escrow-data"
           ),
           fetch(
-            "http://localhost:3001/api/admin/hft-token-data"
+            "https://cryptolance-qgzz.onrender.com/api/admin/hft-token-data"
           ),
           fetch(
-            "http://localhost:3001/api/admin/proposal-manager-data"
+            "https://cryptolance-qgzz.onrender.com/api/admin/proposal-manager-data"
           ),
           fetch(
-            "http://localhost:3001/api/admin/treasury-data"
+            "https://cryptolance-qgzz.onrender.com/api/admin/treasury-data"
           ),
         ]);
 

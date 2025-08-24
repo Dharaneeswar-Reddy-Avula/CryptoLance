@@ -8,7 +8,7 @@
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState(null);
 
-//   const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3001";
+//   const API_BASE = process.env.REACT_APP_API_BASE || "https://cryptolance-qgzz.onrender.com";
 
 //   useEffect(() => {
 //     if (!Array.isArray(yourgigs) || yourgigs.length === 0) {
@@ -126,7 +126,7 @@ const YourGigs = ({ yourgigs = [] }) => {
   const [error, setError] = useState(null);
 
   const API_BASE =
-    process.env.REACT_APP_API_BASE || "http://localhost:3001";
+    process.env.REACT_APP_API_BASE || "https://cryptolance-qgzz.onrender.com";
 
   useEffect(() => {
     // If no IDs, clear state and exit early

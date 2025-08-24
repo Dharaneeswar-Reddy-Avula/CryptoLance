@@ -244,7 +244,7 @@ def send_message(user_prompt):
 
 # --- Flask API Setup ---
 app = Flask(__name__)
-CORS(app, resources={r"/chat": {"origins": ["http://localhost:3001", "http://localhost:5173", "http://localhost:5174", "http://localhost:3000"]}})
+CORS(app, resources={r"/chat": {"origins": ["https://cryptolance-qgzz.onrender.com", "http://localhost:5173", "http://localhost:5174", "http://localhost:3000"]}})
 
 @app.route('/chat', methods=['POST'])
 def chat():

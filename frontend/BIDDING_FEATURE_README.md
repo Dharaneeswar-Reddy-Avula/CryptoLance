@@ -43,7 +43,7 @@ The bidding feature consists of several components that work together to provide
 
 ## API Integration
 
-The bidding feature integrates with the backend API at `http://localhost:3001/api/bids/`:
+The bidding feature integrates with the backend API at `https://cryptolance-qgzz.onrender.com/api/bids/`:
 
 - **POST** `/api/bids` - Create a new bid
 - **GET** `/api/bids` - Get all bids
@@ -135,7 +135,7 @@ Potential improvements for the bidding feature:
 
 To test the bidding feature:
 
-1. Ensure the backend API is running at `http://localhost:3001`
+1. Ensure the backend API is running at `https://cryptolance-qgzz.onrender.com`
 2. Connect a wallet and authenticate
 3. Navigate to a proposal in "Open" state
 4. Try placing a bid with valid data

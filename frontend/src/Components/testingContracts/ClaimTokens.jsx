@@ -22,7 +22,7 @@ function ClaimTokens() {
       setIsLoadingData(true);
       try {
         const response = await fetchData(
-          `http://localhost:3001/api/hftToken/userHFTtokenDetails/${address}`
+          `https://cryptolance-qgzz.onrender.com/api/hftToken/userHFTtokenDetails/${address}`
         );
         if (response.success) {
           setUserTokenMetaData({

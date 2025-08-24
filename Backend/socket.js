@@ -11,7 +11,7 @@ export const initSocket = (server) => {
         "http://localhost:5174",
         "http://localhost:3000",
         "https://crypto-lance-gamma.vercel.app",
-        "http://localhost:3001",
+        "https://cryptolance-qgzz.onrender.com",
       ],
       credentials: true,
     },

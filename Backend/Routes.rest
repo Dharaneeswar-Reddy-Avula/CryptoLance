@@ -1,5 +1,5 @@
 ### Send OTP Request
-POST http://localhost:3001/api/portfolio/send-otp
+POST https://cryptolance-qgzz.onrender.com/api/portfolio/send-otp
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Verify OTP and Create Portfolio
-# POST http://localhost:3001/api/portfolio/verify-otp
+# POST https://cryptolance-qgzz.onrender.com/api/portfolio/verify-otp
 # Content-Type: application/json
 
 # {
@@ -44,7 +44,7 @@ Content-Type: application/json
 #   }
 # }
 
-# POST http://localhost:3001/api/portfolio/resend-otp
+# POST https://cryptolance-qgzz.onrender.com/api/portfolio/resend-otp
 # Content-Type: application/json
 
 # {

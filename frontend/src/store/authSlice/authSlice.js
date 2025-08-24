@@ -23,7 +23,7 @@ export const verifyWalletAuth = createAsyncThunk(
   async ({ address, signature, nonce }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/auth/verify",
+        "https://cryptolance-qgzz.onrender.com/api/auth/verify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -75,7 +75,7 @@ export const validateStoredToken = createAsyncThunk(
       // First check if the backend is accessible
       try {
         const healthResponse = await fetch(
-          `http://localhost:3001/api/auth/health`
+          `https://cryptolance-qgzz.onrender.com/api/auth/health`
         );
         if (!healthResponse.ok) {
           console.warn(
@@ -93,7 +93,7 @@ export const validateStoredToken = createAsyncThunk(
 
       // Use the proper token validation endpoint
       const response = await fetch(
-        `http://localhost:3001/api/auth/validate-token`,
+        `https://cryptolance-qgzz.onrender.com/api/auth/validate-token`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -129,7 +129,7 @@ export const validateStoredToken = createAsyncThunk(
 
       // Get user profile using the validated token
       const userResponse = await fetch(
-        `http://localhost:3001/api/portfolio/me`,
+        `https://cryptolance-qgzz.onrender.com/api/portfolio/me`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -213,7 +213,7 @@ export const connectSocket = createAsyncThunk(
       }
 
       // Use the deployed backend URL for socket connection
-      socket = io("http://localhost:3001", {
+      socket = io("https://cryptolance-qgzz.onrender.com", {
         query: { userId },
         transports: ["websocket", "polling"],
         timeout: 20000,

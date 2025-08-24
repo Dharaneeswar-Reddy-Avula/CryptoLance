@@ -15,7 +15,7 @@ import {
 import Navbar from "../Components/Navbar";
 import JobCard from "../Components/ProposalComponents/JobCard";
 const API_BASE_URL =
-  "http://localhost:3001/api/proposals/openBids";
+  "https://cryptolance-qgzz.onrender.com/api/proposals/openBids";
 
 // USDC uses 6 decimals; values from backend may be in micro-USDC
 const USDC_DECIMALS = 6;

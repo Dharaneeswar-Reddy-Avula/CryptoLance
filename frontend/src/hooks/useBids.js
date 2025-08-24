@@ -14,7 +14,7 @@ export const useBids = (proposalId) => {
       setError(null);
 
       const response = await fetch(
-        `http://localhost:3001/api/bids`
+        `https://cryptolance-qgzz.onrender.com/api/bids`
       );
 
       if (!response.ok) {
@@ -39,7 +39,7 @@ export const useBids = (proposalId) => {
         const authToken = localStorage.getItem("authToken");
 
         const response = await fetch(
-          "http://localhost:3001/api/bids",
+          "https://cryptolance-qgzz.onrender.com/api/bids",
           {
             method: "POST",
             headers: {
@@ -77,7 +77,7 @@ export const useBids = (proposalId) => {
       const authToken = localStorage.getItem("authToken");
 
       const response = await fetch(
-        `http://localhost:3001/api/bids/${bidId}`,
+        `https://cryptolance-qgzz.onrender.com/api/bids/${bidId}`,
         {
           method: "PUT",
           headers: {
@@ -114,7 +114,7 @@ export const useBids = (proposalId) => {
       const authToken = localStorage.getItem("authToken");
 
       const response = await fetch(
-        `http://localhost:3001/api/bids/${bidId}`,
+        `https://cryptolance-qgzz.onrender.com/api/bids/${bidId}`,
         {
           method: "DELETE",
           headers: {
@@ -143,7 +143,7 @@ export const useBids = (proposalId) => {
     setIsLoading(true);
     setError(null);
 
-    fetch(`http://localhost:3001/api/bids`)
+    fetch(`https://cryptolance-qgzz.onrender.com/api/bids`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch bids");

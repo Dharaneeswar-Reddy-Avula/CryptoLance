@@ -19,7 +19,7 @@ const JobDetails = () => {
       setError(null);
 
       const response = await fetch(
-        `http://localhost:3001/api/proposals/${id}`
+        `https://cryptolance-qgzz.onrender.com/api/proposals/${id}`
       );
 
       if (!response.ok) {

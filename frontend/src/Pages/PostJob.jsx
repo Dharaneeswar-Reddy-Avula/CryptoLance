@@ -122,7 +122,7 @@ export default function PostCryptoProject() {
       console.log("Using auth token:", authToken ? "Token exists" : "No token");
 
       // Try both relative and absolute URLs
-      const apiUrl = "http://localhost:3001";
+      const apiUrl = "https://cryptolance-qgzz.onrender.com";
       const endpoint = `${apiUrl}/api/proposals`;
 
       console.log("Making request to:", endpoint);
