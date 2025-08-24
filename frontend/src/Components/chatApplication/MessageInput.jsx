@@ -9,9 +9,10 @@ import { sendMessage, addMessageOptimistically } from "../../store/ChatApplicati
 const MessageInput = () => {
   const [text, setText] = useState("")
   const [imagePreview, setImagePreview] = useState(null)
+  const [isSending, setIsSending] = useState(false)
   const fileInputRef = useRef(null)
   const dispatch = useDispatch()
-  const { selectedUser } = useSelector((state) => state.chatApp)
+  const { selectedChatData } = useSelector((state) => state.chat)
   const { user: authUser } = useSelector((state) => state.auth)
 
   const handleImageChange = (e) => {
@@ -36,15 +37,19 @@ const MessageInput = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault()
     if (!text.trim() && !imagePreview) return
+    if (isSending) return // Prevent multiple sends
 
     try {
-      // Create optimistic message
+      setIsSending(true)
+      
+      // Create optimistic message with unique ID
+      const optimisticId = `temp_${Date.now()}_${Math.random()}`
       const optimisticMessage = {
-        _id: `temp_${Date.now()}`,
+        _id: optimisticId,
         text: text.trim(),
         image: imagePreview || "",
         senderId: authUser._id,
-        recieverId: selectedUser._id,
+        recieverId: selectedChatData._id,
         createdAt: new Date().toISOString(),
         __optimistic: true, // Mark as optimistic
       }
@@ -60,7 +65,7 @@ const MessageInput = () => {
       // Send message to backend
       await dispatch(
         sendMessage({
-          receiverId: selectedUser._id,
+          receiverId: selectedChatData._id,
           messageData: {
             text: text.trim(),
             image: imagePreview,
@@ -69,8 +74,9 @@ const MessageInput = () => {
       )
     } catch (error) {
       console.error("Failed to send message:", error)
-      // Optionally remove the optimistic message on error
-      // dispatch(removeOptimisticMessage(optimisticMessage._id));
+      toast.error("Failed to send message")
+    } finally {
+      setIsSending(false)
     }
   }
 
@@ -111,14 +117,16 @@ const MessageInput = () => {
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
+            disabled={isSending}
           />
 
-          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} />
+          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} disabled={isSending} />
 
           <button
             type="button"
-            className="p-1 rounded-full hover:bg-slate-600/50 text-slate-400 hover:text-cyan-400 transition-colors"
+            className="p-1 rounded-full hover:bg-slate-600/50 text-slate-400 hover:text-cyan-400 transition-colors disabled:opacity-50"
             onClick={() => fileInputRef.current?.click()}
+            disabled={isSending}
           >
             <Paperclip className="size-4" />
           </button>
@@ -128,9 +136,13 @@ const MessageInput = () => {
           type="submit"
           className="p-2 rounded-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 
                    disabled:cursor-not-allowed transition-colors text-white"
-          disabled={!text.trim() && !imagePreview}
+          disabled={(!text.trim() && !imagePreview) || isSending}
         >
-          <Send className="size-4" />
+          {isSending ? (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            <Send className="size-4" />
+          )}
         </button>
       </form>
     </div>
@@ -138,3 +150,4 @@ const MessageInput = () => {
 }
 
 export default MessageInput
+

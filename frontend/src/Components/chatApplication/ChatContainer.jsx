@@ -1,30 +1,34 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import ChatHeader from "./ChatHeader"
 import MessageInput from "./MessageInput"
 import MessageSkeleton from "./skeletons/MessageSkeleton"
 import { useSelector, useDispatch } from "react-redux"
 import { getMessages } from "../../store/ChatApplicationSlice/ChatAppSlice"
-import {formatMessageTime} from "./MessageTime"
-
+import { formatMessageTime } from "./MessageTime"
 
 const ChatContainer = () => {
-  const { messages, isMessagesLoading, selectedUser } = useSelector((state) => state.chatApp)
+  const { selectedChatMessages: messages, selectedChatData: selectedUser } = useSelector((state) => state.chat)
   const { user: authUser } = useSelector((state) => state.auth)
+  const [isMessagesLoading, setIsMessagesLoading] = useState(false)
+  
   console.log("ChatContainer - authUser:", authUser)
   console.log("ChatContainer - messages:", messages)
+  console.log("ChatContainer - selectedUser:", selectedUser)
+  
   const dispatch = useDispatch()
   const messageEndRef = useRef(null)
 
   useEffect(() => {
     if (selectedUser) {
-      dispatch(getMessages(selectedUser._id))
+      setIsMessagesLoading(true)
+      dispatch(getMessages(selectedUser._id)).finally(() => setIsMessagesLoading(false))
     }
   }, [selectedUser, dispatch])
 
   useEffect(() => {
-    if (messageEndRef.current && messages) {
+    if (messageEndRef.current && messages && messages.length > 0) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
   }, [messages])
@@ -50,14 +54,14 @@ const ChatContainer = () => {
           backgroundSize: "20px 20px",
         }}
       >
-        {authUser &&
+        {authUser && messages && messages.length > 0 ? (
           messages.map((message, index) => {
             const isOwnMessage = authUser && message.senderId === authUser._id
             const isOptimistic = message.__optimistic
 
             return (
               <div
-                key={message._id}
+                key={message._id || index}
                 className={`flex ${
                   isOwnMessage ? "justify-end" : "justify-start"
                 } animate-fadeIn ${isOptimistic ? "opacity-70" : ""}`}
@@ -72,7 +76,9 @@ const ChatContainer = () => {
                     <div className="size-8 rounded-full border border-cyan-500/30 overflow-hidden">
                       <img
                         src={
-                          isOwnMessage ? authUser.profilePic || "/avatar.png" : selectedUser.profilePic || "/avatar.png"
+                          isOwnMessage 
+                            ? authUser.profilePic || "/avatar.png" 
+                            : selectedUser?.profile || "/avatar.png"
                         }
                         alt="profile pic"
                         className="w-full h-full object-cover"
@@ -99,14 +105,28 @@ const ChatContainer = () => {
 
                       <div className={`text-xs mt-1 ${isOwnMessage ? "text-cyan-100" : "text-slate-400"}`}>
                         {formatMessageTime(message.createdAt)}
-                        {isOptimistic && " ⏳"}
+                        {isOptimistic && (
+                          <span className="ml-1 inline-flex items-center">
+                            <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin mr-1"></div>
+                            Sending...
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             )
-          })}
+          })
+        ) : (
+          <div className="flex items-center justify-center h-full text-slate-400">
+            <div className="text-center">
+              <div className="text-6xl mb-4">💬</div>
+              <p className="text-lg font-medium">No messages yet</p>
+              <p className="text-sm">Start a conversation with {selectedUser?.fullname || "this user"}</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <MessageInput />

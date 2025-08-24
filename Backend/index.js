@@ -1,42 +1,45 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import http from "http";
-import cors from "cors";
-import AdminRoutes from "./routes/AdminRoutes.js";
-
-// Import your existing routes
-
-import BidRoutes from "./routes/BidRoutes.js";
-import UserRoutes from "./routes/UserRoutes.js";
-import authRoutes from "./routes/AuthRoutes.js";
-import HFTtokenRoutes from "./routes/HFTtokenRoutes.js";
-import TreasuryRoutes from "./routes/TreasuryRoutes.js";
-import EscrowRoutes from "./routes/EscrowRoutes.js";
-import ProposalManagerRoutes from "./routes/ProposalManagerRoutes.js";
-import PortfolioRoutes from "./routes/PortfolioRoutes.js";
-import gigRoutes from "./routes/GigRoutes.js";
-import messageRoutes from "./routes/chatRoutes.js";
-import ActiveFreelancersRoutes from "./routes/ActiveFreelancersRoutes.js";
-import CrossPortfolioRoutes from "./routes/CrossPortfolioRoutes.js";
-import ProposalRoutes from "./routes/ProposalRoutes.js";
+import express from "express"
+import mongoose from "mongoose"
+import dotenv from "dotenv"
+import http from "http"
+import cors from "cors"
+import cookieParser from "cookie-parser"
+import AdminRoutes from "./routes/AdminRoutes.js"
+import BidRoutes from "./routes/BidRoutes.js"
+import UserRoutes from "./routes/UserRoutes.js"
+import authRoutes from "./routes/AuthRoutes.js"
+import HFTtokenRoutes from "./routes/HFTtokenRoutes.js"
+import TreasuryRoutes from "./routes/TreasuryRoutes.js"
+import EscrowRoutes from "./routes/EscrowRoutes.js"
+import ProposalManagerRoutes from "./routes/ProposalManagerRoutes.js"
+import PortfolioRoutes from "./routes/PortfolioRoutes.js"
+import gigRoutes from "./routes/GigRoutes.js"
+import messageRoutes from "./routes/chatRoutes.js"
+import ActiveFreelancersRoutes from "./routes/ActiveFreelancersRoutes.js"
+import CrossPortfolioRoutes from "./routes/CrossPortfolioRoutes.js"
+import ProposalRoutes from "./routes/ProposalRoutes.js"
+// import contactsRoutes from "./routes/ContactRoutes.js"
+// import messagesRoutes from "./routes/MessagesRoutes.js"
+// import channelRoutes from "./routes/ChannelRoutes.js"
 
 // Import the WebSocket configuration
-import { initSocket } from "./socket.js";
+import { setupSocket } from "./socket.js"
 
 // Load environment variables
-dotenv.config();
-const PORT = process.env.PORT || 3002;
+dotenv.config()
+const PORT = process.env.PORT || 3002
+const DATABASE_URL = process.env.MONGO_URI
 
 // Create Express app and HTTP server
-const app = express();
-const server = http.createServer(app);
+const app = express()
+const server = http.createServer(app)
 
 // Initialize Socket.io
-initSocket(server);
+setupSocket(server)
 
-// Middleware to parse JSON and enable CORS
-app.use(express.json());
+// Middleware to parse JSON, cookies, and enable CORS
+app.use(express.json())
+app.use(cookieParser())
 
 app.use(
   cors({
@@ -47,39 +50,43 @@ app.use(
       "https://crypto-lance-seven.vercel.app",
     ],
     credentials: true, // if you want to allow cookies/auth headers
-  })
-);
-// app.use(cors());
+  }),
+)
+
 // All your existing routes
-app.use("/api/proposals", ProposalRoutes);
-app.use("/api/bids", BidRoutes);
-app.use("/api/users", UserRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/hftToken", HFTtokenRoutes);
-app.use("/api/treasury", TreasuryRoutes);
-app.use("/api/escrow", EscrowRoutes);
-app.use("/api/proposalManager", ProposalManagerRoutes);
-app.use("/api/portfolio", PortfolioRoutes);
-app.use("/api/gigs", gigRoutes);
-app.use("/api/admin", AdminRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/activeFreelancers", ActiveFreelancersRoutes);
-app.use("/api/cross-portfolio", CrossPortfolioRoutes);
+app.use("/api/proposals", ProposalRoutes)
+app.use("/api/bids", BidRoutes)
+app.use("/api/users", UserRoutes)
+app.use("/api/auth", authRoutes)
+app.use("/api/hftToken", HFTtokenRoutes)
+app.use("/api/treasury", TreasuryRoutes)
+app.use("/api/escrow", EscrowRoutes)
+app.use("/api/proposalManager", ProposalManagerRoutes)
+app.use("/api/portfolio", PortfolioRoutes)
+app.use("/api/gigs", gigRoutes)
+app.use("/api/admin", AdminRoutes)
+app.use("/api/messages", messageRoutes)
+app.use("/api/activeFreelancers", ActiveFreelancersRoutes)
+app.use("/api/cross-portfolio", CrossPortfolioRoutes)
+// app.use("/api/contacts", contactsRoutes)
+// app.use("/api/messages", messagesRoutes)
+// app.use("/api/channels", channelRoutes)
+
 // Default route
 app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+  res.send("API is running...")
+})
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const userMessage = req.body.message;
+    const userMessage = req.body.message
     if (!userMessage) {
-      return res.status(400).json({ error: "Message field is required" });
+      return res.status(400).json({ error: "Message field is required" })
     }
 
-    console.log("Proxying message to Flask API:", userMessage);
+    console.log("Proxying message to Flask API:", userMessage)
 
-    const flaskApiUrl = "http://127.0.0.1:5000/chat";
+    const flaskApiUrl = "http://127.0.0.1:5000/chat"
 
     const flaskResponse = await fetch(flaskApiUrl, {
       method: "POST",
@@ -88,38 +95,36 @@ app.post("/api/chat", async (req, res) => {
       },
       body: JSON.stringify({ message: userMessage }),
     }).catch((err) => {
-      throw new Error(`Fetch failed: ${err.message}`);
-    });
+      throw new Error(`Fetch failed: ${err.message}`)
+    })
 
-    console.log("Flask API response status:", flaskResponse.status);
+    console.log("Flask API response status:", flaskResponse.status)
 
     if (!flaskResponse.ok) {
-      const errorData = await flaskResponse.json().catch(() => ({}));
-      console.error("Flask API error response:", errorData);
-      return res.status(flaskResponse.status).json(errorData);
+      const errorData = await flaskResponse.json().catch(() => ({}))
+      console.error("Flask API error response:", errorData)
+      return res.status(flaskResponse.status).json(errorData)
     }
 
-    const responseData = await flaskResponse.json();
-    res.json(responseData);
+    const responseData = await flaskResponse.json()
+    res.json(responseData)
   } catch (error) {
-    console.error("Detailed error proxying to Flask API:", error);
-    res
-      .status(500)
-      .json({ error: "Internal server error", details: error.message });
+    console.error("Detailed error proxying to Flask API:", error)
+    res.status(500).json({ error: "Internal server error", details: error.message })
   }
-});
+})
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(DATABASE_URL)
   .then((conn) => {
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`)
   })
   .catch((error) => {
-    console.error(`❌ MongoDB connection error: ${error.message}`);
-    process.exit(1);
-  });
+    console.error(`❌ MongoDB connection error: ${error.message}`)
+    process.exit(1)
+  })
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+  console.log(`🚀 Server running on http://localhost:${PORT}`)
+})

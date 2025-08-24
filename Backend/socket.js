@@ -1,114 +1,100 @@
-// src/lib/socket.js
-import { Server } from "socket.io";
+import { Server } from "socket.io"
 
-let io;
+let io = null
 
-export const initSocket = (server) => {
+export const setupSocket = (server) => {
   io = new Server(server, {
     cors: {
       origin: [
         "http://localhost:5173",
         "http://localhost:5174",
-        "http://localhost:3000",
         "https://crypto-lance-gamma.vercel.app",
-        "https://cryptolance-qgzz.onrender.com",
+        "https://crypto-lance-seven.vercel.app",
+        "https://cryptolance-qgzz.onrender.com"
       ],
       credentials: true,
+      methods: ["GET", "POST"]
     },
-  });
-
-  const userSocketMap = {};
+    transports: ["websocket", "polling"]
+  })
 
   io.on("connection", (socket) => {
-    console.log("A user connected", socket.id);
-
-    const rawUserId = socket.handshake.query.userId;
-    const userId = (rawUserId || "").toLowerCase();
-
+    console.log("🔌 User connected:", socket.id)
+    
+    const userId = socket.handshake.query.userId
     if (userId) {
-      userSocketMap[userId] = socket.id;
-      console.log(`User ${userId} connected. Socket ID: ${socket.id}`);
-
-      // Emit online users to all connected clients
-      io.emit("getOnlineUsers", Object.keys(userSocketMap));
+      socket.userId = userId
+      socket.join(userId) // Join user's personal room
+      console.log(`👤 User ${userId} joined their room`)
     }
 
-    socket.on("disconnect", () => {
-      console.log("A user disconnected", socket.id);
-      if (userId) {
-        delete userSocketMap[userId];
-        console.log(`User ${userId} disconnected. Socket ID: ${socket.id}`);
+    // Handle user disconnection
+    socket.on("disconnect", (reason) => {
+      console.log("🔌 User disconnected:", socket.id, "Reason:", reason)
+    })
 
-        // Emit updated online users to all connected clients
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
-      }
-    });
+    // Handle new message
+    socket.on("newMessage", (message) => {
+      console.log("📨 New message received:", message)
+      // Broadcast to all connected clients
+      io.emit("newMessage", message)
+    })
 
-    // Handle typing events
+    // Handle typing indicators
     socket.on("typing", (data) => {
-      const receiverSocketId = userSocketMap[data.receiverId];
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("userTyping", {
-          userId: data.userId,
-          isTyping: data.isTyping,
-        });
-      }
-    });
+      socket.broadcast.to(data.receiverId).emit("typing", {
+        senderId: data.senderId,
+        isTyping: data.isTyping
+      })
+    })
 
-    // Handle stop typing events
+    // Handle stop typing
     socket.on("stopTyping", (data) => {
-      const receiverSocketId = userSocketMap[data.receiverId];
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("userStopTyping", {
-          userId: data.userId,
-          isTyping: false,
-        });
-      }
-    });
+      socket.broadcast.to(data.receiverId).emit("stopTyping", {
+        senderId: data.senderId
+      })
+    })
+  })
 
-    // Debug: Log connection events
-    console.log("Current userSocketMap:", userSocketMap);
-  });
-
-  return io;
-};
-
-export const getRecieverSocketId = (userId) => {
-  if (!io) return null;
-
-  // Get all connected sockets
-  const sockets = io.sockets.sockets;
-  let targetSocketId = null;
-
-  // Find the socket ID for the given user ID
-  for (const [socketId, socket] of sockets) {
-    if (socket.handshake.query.userId === userId) {
-      targetSocketId = socketId;
-      break;
-    }
-  }
-
-  return targetSocketId;
-};
+  console.log("✅ Socket.IO server initialized")
+  return io
+}
 
 export const getIO = () => {
   if (!io) {
-    throw new Error("Socket.io not initialized!");
+    throw new Error("Socket.IO not initialized. Call setupSocket first.")
   }
-  return io;
-};
+  return io
+}
 
-// Helper function to emit messages to specific users
 export const emitToUser = (userId, event, data) => {
-  if (!io) return false;
-
-  const socketId = getRecieverSocketId(userId);
-  if (socketId) {
-    console.log(`Emitting ${event} to user ${userId} (socket: ${socketId})`);
-    io.to(socketId).emit(event, data);
-    return true;
-  } else {
-    console.log(`User ${userId} not found in socket map`);
+  if (!io) {
+    console.warn("Socket.IO not initialized")
+    return false
   }
-  return false;
-};
+  
+  try {
+    io.to(userId).emit(event, data)
+    console.log(`📡 Emitted ${event} to user ${userId}`)
+    return true
+  } catch (error) {
+    console.error(`❌ Error emitting ${event} to user ${userId}:`, error)
+    return false
+  }
+}
+
+export const emitToAll = (event, data) => {
+  if (!io) {
+    console.warn("Socket.IO not initialized")
+    return false
+  }
+  
+  try {
+    io.emit(event, data)
+    console.log(`📡 Emitted ${event} to all users`)
+    return true
+  } catch (error) {
+    console.error(`❌ Error emitting ${event} to all users:`, error)
+    return false
+  }
+}
