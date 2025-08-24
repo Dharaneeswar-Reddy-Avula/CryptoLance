@@ -194,51 +194,73 @@
 
 // export default Sidebar;
 
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Users, Search } from "lucide-react"
-import SidebarSkeleton from "./skeletons/MessageSkeleton"
-import { useSelector } from "react-redux"
-import { useDispatch } from "react-redux"
-import { getUsers, setSelectedUser } from "../../store/ChatApplicationSlice/ChatAppSlice"
-
+import { useEffect, useState } from "react";
+import { Users, Search } from "lucide-react";
+import SidebarSkeleton from "./skeletons/MessageSkeleton";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import {
+  getUsers,
+  setSelectedUser,
+} from "../../store/ChatApplicationSlice/ChatAppSlice";
+import { useAccount } from "wagmi";
+import { FaArrowLeftLong } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 const Sidebar = () => {
-  const { directMessagesContacts: users, selectedChatData: selectedUser } = useSelector((state) => state.chat)
-  const { onlineUsers } = useSelector((state) => state.auth)
-  const [isUsersLoading, setIsUsersLoading] = useState(false)
-  console.log("Sidebar - onlineUsers from Redux:", onlineUsers)
-  console.log("Sidebar - users from chatSlice:", users)
-  const [showOnlineOnly, setShowOnlineOnly] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const dispatch = useDispatch()
+  const { directMessagesContacts: users, selectedChatData: selectedUser } =
+    useSelector((state) => state.chat);
+  const { onlineUsers } = useSelector((state) => state.auth);
+  const [isUsersLoading, setIsUsersLoading] = useState(false);
+  console.log("Sidebar - onlineUsers from Redux:", onlineUsers);
+  console.log("Sidebar - users from chatSlice:", users);
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useDispatch();
+  const { address } = useAccount();
 
   useEffect(() => {
-    setIsUsersLoading(true)
-    dispatch(getUsers()).finally(() => setIsUsersLoading(false))
-  }, [dispatch])
+    setIsUsersLoading(true);
+    dispatch(getUsers()).finally(() => setIsUsersLoading(false));
+  }, [dispatch]);
 
   const filteredUsers = users.filter((user) => {
-    const matchesName = user.fullname?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesWallet = user._id?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSearch = matchesName || matchesWallet
+    if (String(user._id).toLowerCase() === String(address).toLowerCase()) {
+      return false;
+    }
+    const matchesName = user.fullname
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesWallet = user._id
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSearch = matchesName || matchesWallet;
 
-    if (!matchesSearch) return false
+    if (!matchesSearch) return false;
 
     if (showOnlineOnly) {
-      const userId = String(user._id || "").toLowerCase()
-      return Array.isArray(onlineUsers) && onlineUsers.some((onlineId) => String(onlineId).toLowerCase() === userId)
+      const userId = String(user._id || "").toLowerCase();
+      return (
+        Array.isArray(onlineUsers) &&
+        onlineUsers.some(
+          (onlineId) => String(onlineId).toLowerCase() === userId
+        )
+      );
     }
-    return true
-  })
+    return true;
+  });
 
   // Check if a user is online
   const isUserOnline = (user) => {
-    const userId = String(user._id || "").toLowerCase()
-    return Array.isArray(onlineUsers) && onlineUsers.some((onlineId) => String(onlineId).toLowerCase() === userId)
-  }
+    const userId = String(user._id || "").toLowerCase();
+    return (
+      Array.isArray(onlineUsers) &&
+      onlineUsers.some((onlineId) => String(onlineId).toLowerCase() === userId)
+    );
+  };
 
-  if (isUsersLoading) return <SidebarSkeleton />
+  if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
     <aside className="h-full w-full lg:w-80 bg-slate-900/90 backdrop-blur-sm border-r border-cyan-500/20 flex flex-col">
@@ -247,14 +269,18 @@ const Sidebar = () => {
           <div className="p-2 bg-cyan-500/20 rounded-lg">
             <Users className="size-5 text-cyan-400" />
           </div>
-          <span className="font-medium text-lg hidden lg:block text-white">Contacts</span>
+          <span className="font-medium text-lg block text-white">
+            Contacts
+          </span>
           <div className="ml-auto flex items-center gap-1">
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-            <span className="text-xs text-slate-400">{onlineUsers?.length || 0}</span>
+            <span className="text-xs text-slate-400">
+              {onlineUsers?.length || 0}
+            </span>
           </div>
         </div>
 
-        <div className="relative mb-3 hidden lg:block">
+        <div className="relative mb-3 block">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 size-4" />
           <input
             type="text"
@@ -265,7 +291,10 @@ const Sidebar = () => {
           />
         </div>
 
-        <div className="hidden lg:flex items-center justify-between">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="text-sm text-slate-400 flex items-center gap-2"><FaArrowLeftLong />
+ Back to Home</Link>
+
           <label className="cursor-pointer flex items-center gap-2 group">
             <div className="relative">
               <input
@@ -286,14 +315,16 @@ const Sidebar = () => {
                 ></div>
               </div>
             </div>
-            <span className="text-sm text-slate-300 group-hover:text-cyan-400 transition-colors">Online only</span>
+            <span className="text-sm text-slate-300 group-hover:text-cyan-400 transition-colors">
+              Online only
+            </span>
           </label>
         </div>
       </div>
 
       <div className="overflow-y-auto w-full py-1 scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent">
         {filteredUsers.map((user) => {
-          const isOnline = isUserOnline(user)
+          const isOnline = isUserOnline(user);
           return (
             <button
               key={user._id}
@@ -301,29 +332,48 @@ const Sidebar = () => {
               className={`
                 w-full p-3 mx-2 mb-1 flex items-center gap-3 rounded-lg transition-all duration-200 group
                 hover:bg-slate-700/50
-                ${selectedUser?._id === user._id ? "bg-slate-600/40 border-l-4 border-slate-400" : ""}
+                ${
+                  selectedUser?._id === user._id
+                    ? "bg-slate-600/40 border-l-4 border-slate-400"
+                    : ""
+                }
               `}
             >
               <div className="relative flex-shrink-0">
-                <img
-                  src={user.profile || "/avatar.png"}
-                  alt={user.fullname}
-                  className="size-11 object-cover rounded-full border-2 border-slate-600 group-hover:border-cyan-500/50 transition-colors"
-                />
+                {user.profile ? (
+                  <img
+                    src={user.profile}
+                    alt={user.fullname}
+                    className="size-11 object-cover rounded-full border-2 border-slate-600 group-hover:border-cyan-500/50 transition-colors"
+                  />
+                ) : (
+                  <div className="size-11 flex items-center justify-center rounded-full border-2 border-slate-600 group-hover:border-cyan-500/50 bg-slate-700 text-white font-semibold text-lg">
+                    {user.fullname?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+
                 {isOnline && (
                   <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-emerald-400 rounded-full border-2 border-slate-900"></div>
                 )}
               </div>
 
-              <div className="hidden lg:block text-left min-w-0 flex-1">
-                <div className="font-medium truncate text-white text-sm">{user.fullname}</div>
-                <div className="text-xs text-slate-400 truncate">{user._id}</div>
-                <div className={`text-xs ${isOnline ? "text-emerald-400" : "text-slate-500"}`}>
+              <div className="block text-left min-w-0 flex-1">
+                <div className="font-medium truncate text-white text-sm">
+                  {user.fullname}
+                </div>
+                <div className="text-xs text-slate-400 truncate">
+                  {user._id}
+                </div>
+                <div
+                  className={`text-xs ${
+                    isOnline ? "text-emerald-400" : "text-slate-500"
+                  }`}
+                >
                   {isOnline ? "Online" : "Offline"}
                 </div>
               </div>
             </button>
-          )
+          );
         })}
 
         {filteredUsers.length === 0 && (
@@ -334,8 +384,7 @@ const Sidebar = () => {
         )}
       </div>
     </aside>
-  )
-}
+  );
+};
 
-export default Sidebar
-
+export default Sidebar;

@@ -25,11 +25,17 @@ const store = configureStore({
   preloadedState,
 });
 
-// Save Redux state to localStorage on changes
+// Save Redux state to localStorage on changes, excluding socket
 store.subscribe(() => {
-  saveState({
-    auth: store.getState().auth,
-  });
+  const currentState = store.getState();
+  // Create a clean state object without the socket
+  const cleanState = {
+    auth: {
+      ...currentState.auth,
+      socket: null, // Exclude socket from localStorage
+    },
+  };
+  saveState(cleanState);
 });
 
 export default store;

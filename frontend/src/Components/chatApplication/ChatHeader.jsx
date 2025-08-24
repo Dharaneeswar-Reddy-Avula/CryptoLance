@@ -102,7 +102,7 @@ const ChatHeader = () => {
         </div>
 
         <div className="flex items-center gap-1">
-          <button className="p-2 rounded-full hover:bg-slate-700/50 text-slate-400 hover:text-cyan-400 transition-colors">
+          {/* <button className="p-2 rounded-full hover:bg-slate-700/50 text-slate-400 hover:text-cyan-400 transition-colors">
             <Phone className="size-4" />
           </button>
           <button className="p-2 rounded-full hover:bg-slate-700/50 text-slate-400 hover:text-cyan-400 transition-colors">
@@ -110,7 +110,7 @@ const ChatHeader = () => {
           </button>
           <button className="p-2 rounded-full hover:bg-slate-700/50 text-slate-400 hover:text-cyan-400 transition-colors">
             <MoreVertical className="size-4" />
-          </button>
+          </button> */}
           <button
             onClick={() => dispatch(setSelectedUser(null))}
             className="p-2 rounded-full hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors ml-2"

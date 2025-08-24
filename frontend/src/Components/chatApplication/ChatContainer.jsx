@@ -33,6 +33,31 @@ const ChatContainer = () => {
     }
   }, [messages])
 
+  // Helper function to render profile image or fallback
+  const renderProfileImage = (user, isOwnMessage) => {
+    if (isOwnMessage) {
+      if (authUser?.profile) {
+        return <img src={authUser.profile} alt="profile" className="w-full h-full object-cover" />
+      } else {
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-cyan-600 text-white font-semibold text-sm">
+            {authUser?.fullname?.charAt(0)?.toUpperCase() || authUser?.name?.charAt(0)?.toUpperCase() || "U"}
+          </div>
+        )
+      }
+    } else {
+      if (selectedUser?.profile) {
+        return <img src={selectedUser.profile} alt="profile" className="w-full h-full object-cover" />
+      } else {
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-slate-600 text-white font-semibold text-sm">
+            {selectedUser?.fullname?.charAt(0)?.toUpperCase() || "U"}
+          </div>
+        )
+      }
+    }
+  }
+
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
@@ -74,15 +99,7 @@ const ChatContainer = () => {
                 >
                   <div className="flex-shrink-0">
                     <div className="size-8 rounded-full border border-cyan-500/30 overflow-hidden">
-                      <img
-                        src={
-                          isOwnMessage 
-                            ? authUser.profilePic || "/avatar.png" 
-                            : selectedUser?.profile || "/avatar.png"
-                        }
-                        alt="profile pic"
-                        className="w-full h-full object-cover"
-                      />
+                      {renderProfileImage(authUser, isOwnMessage)}
                     </div>
                   </div>
 
@@ -95,11 +112,18 @@ const ChatContainer = () => {
                       }`}
                     >
                       {message.image && (
-                        <img
-                          src={message.image || "/placeholder.svg"}
-                          alt="Attachment"
-                          className="max-w-[200px] rounded-md mb-1"
-                        />
+                        <div className="mb-2">
+                          <img
+                            src={message.image}
+                            alt="Attachment"
+                            className="max-w-[200px] rounded-md cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(message.image, '_blank')}
+                            onError={(e) => {
+                              e.target.style.display = 'none'
+                              console.warn('Failed to load image:', message.image)
+                            }}
+                          />
+                        </div>
                       )}
                       {message.text && <p className="text-sm leading-relaxed break-words">{message.text}</p>}
 

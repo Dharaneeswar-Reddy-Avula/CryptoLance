@@ -77,7 +77,7 @@ const ChatApp = () => {
       </div>
 
       <div className="relative z-10 flex items-center justify-center ">
-        <div className="w-full h-[100vh] bg-slate-800/95 backdrop-blur-xl rounded-xl border border-cyan-500/20 shadow-2xl shadow-cyan-500/5 overflow-hidden">
+        <div className="w-full h-[100vh] bg-slate-800/95 backdrop-blur-xl shadow-2xl shadow-cyan-500/5 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/8 via-transparent to-cyan-400/8 rounded-xl blur-sm pointer-events-none"></div>
 
           <div className="relative flex h-full">

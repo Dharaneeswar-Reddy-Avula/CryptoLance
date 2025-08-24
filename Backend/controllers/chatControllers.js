@@ -1,12 +1,6 @@
 import Message from "../models/messageModel.js"
 import PortfolioScheema from "../models/PortfolioModel.js"
-import { renameSync } from "fs"
-import { dirname } from "path"
-import { fileURLToPath } from "url"
 import { emitToUser, emitToAll } from "../socket.js"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 export const getUsersForSidebar = async (req, res) => {
   try {
@@ -63,22 +57,15 @@ export const sendMessage = async (req, res) => {
     const { id: recieverId } = req.params
     const senderId = req.user.address
 
-    if (!text && !req.file) {
-      return res.status(400).send("Message or file is required.")
+    if (!text && !image) {
+      return res.status(400).send("Message or image is required.")
     }
 
     const messageData = {
       senderId,
       recieverId,
-      text,
+      text: text || "",
       image: image || "",
-    }
-
-    if (req.file) {
-      const date = Date.now()
-      const fileName = "uploads/files/" + date + req.file.originalname
-      renameSync(req.file.path, fileName)
-      messageData.image = fileName
     }
 
     const newMessage = new Message(messageData)
@@ -88,6 +75,7 @@ export const sendMessage = async (req, res) => {
       senderId,
       recieverId,
       messageId: newMessage._id,
+      hasImage: !!image,
     })
 
     // Emit to receiver if online
