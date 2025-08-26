@@ -8,19 +8,21 @@ import Footer from "../Components/Footer";
 import TestimonialsSection from "../Components/main/Testimonals";
 import PopularCategories from "../Components/main/PopularCategories";
 import Chatbot from "../Components/Chatbot";
+import WalletConnect from "../Components/walletConnection/WalletConnect";
 const Home = () => {
   return (
     <div className="p-4">
       {" "}
-      <Navbar />
+      {/* <Navbar />
       <HeroSection />
       <MarketSection />
-      <ActiveFreelancers />
+      <ActiveFreelancers /> */}
       {/* <PopularCategories /> */}
-      <HowItWorksSection />
+      {/* <HowItWorksSection /> */}
       {/* <TestimonialsSection /> */}
-      <Chatbot />
-      <Footer />
+      {/* <Chatbot />
+      <Footer /> */}
+      <WalletConnect />
     </div>
   );
 };

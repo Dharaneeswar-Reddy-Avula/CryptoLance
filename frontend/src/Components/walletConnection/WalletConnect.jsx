@@ -7,7 +7,8 @@ import {
   validateStoredToken,
 } from "../../store/authSlice/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
+import "./star.css";
 function WalletConnect({ onAuthSuccess }) {
   const { address, isConnected, chain, status } = useAccount();
   const { signMessageAsync } = useSignMessage();
@@ -17,6 +18,7 @@ function WalletConnect({ onAuthSuccess }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
+    const navigate = useNavigate();
 
   // Use refs to track previous values and prevent unnecessary re-authentication
   const prevAddressRef = useRef(null);
@@ -52,6 +54,8 @@ function WalletConnect({ onAuthSuccess }) {
                 result.payload.userExists,
                 result.payload.user
               );
+          // Navigate to /chatApplication after successful token validation
+          navigate("/chatApplication");
             } else {
               console.log(
                 "Stored token validation failed, will require re-authentication"
@@ -203,6 +207,8 @@ function WalletConnect({ onAuthSuccess }) {
             verifyResult.userExists,
             verifyResult.user
           );
+            // Navigate to /chatApplication after successful wallet connection
+            navigate("/chatApplication");
         } else {
           setAuthStatus("Authentication failed");
           hasAuthenticatedRef.current = false;
@@ -256,10 +262,27 @@ function WalletConnect({ onAuthSuccess }) {
   }, [isConnected, status, dispatch]);
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center min-h-screen relative">
       {/* <h2>Connect Wallet</h2> */}
-      <w3m-button />
-      {chainError && <p style={{ color: "red" }}>{chainError}</p>}
+         <div className="bg-animation">
+          <div id="stars"></div>
+          <div id="stars2"></div>
+          <div id="stars3"></div>
+          <div id="stars4"></div>
+        </div>
+<div className="relative z-10 flex gap-3 flex-col items-center ">
+     <w3m-button />
+     {isConnected ? (
+<div className="mt-[20px] text-sm text-white cursor-pointer bg-cyan-500/90 backdrop-blur-lg  p-3 rounded-full" onClick={() => navigate("/chatApplication")}>
+  Click here to Dive into Chat World
+</div>
+) : (
+  <div className=" text-sm text-white    backdrop-blur-lg  p-2 rounded-full flex items-center justify-center">
+    Connect your wallet to continue
+  </div>
+)}
+</div>
+     {chainError && <p style={{ color: "red" }}>{chainError}</p>}
       {/* {authStatus && <p>{authStatus}</p>} */}
     </div>
   );

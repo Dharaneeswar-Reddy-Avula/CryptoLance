@@ -96,3 +96,38 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" })
   }
 }
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params
+    const userId = req.user.address
+
+    // Find the message
+    const message = await Message.findById(messageId)
+    
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" })
+    }
+
+    // Check if the user is authorized to delete this message (only sender can delete)
+    if (message.senderId !== userId) {
+      return res.status(403).json({ error: "Unauthorized to delete this message" })
+    }
+
+    // Delete the message
+    await Message.findByIdAndDelete(messageId)
+
+    // Emit delete event to both users for real-time updates
+    const receiverId = message.recieverId
+    emitToUser(receiverId, "messageDeleted", { messageId, deletedBy: userId })
+    emitToUser(userId, "messageDeleted", { messageId, deletedBy: userId })
+    
+    // Also emit to all connected clients
+    emitToAll("messageDeleted", { messageId, deletedBy: userId })
+
+    res.status(200).json({ message: "Message deleted successfully" })
+  } catch (error) {
+    console.log("Error in deleteMessage Controller", error.message)
+    res.status(500).json({ error: "Internal Server Error" })
+  }
+}

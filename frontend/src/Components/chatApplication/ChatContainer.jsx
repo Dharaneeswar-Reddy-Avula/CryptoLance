@@ -5,7 +5,7 @@ import ChatHeader from "./ChatHeader"
 import MessageInput from "./MessageInput"
 import MessageSkeleton from "./skeletons/MessageSkeleton"
 import { useSelector, useDispatch } from "react-redux"
-import { getMessages } from "../../store/ChatApplicationSlice/ChatAppSlice"
+import { getMessages, deleteMessage } from "../../store/ChatApplicationSlice/ChatAppSlice"
 import { formatMessageTime } from "./MessageTime"
 
 const ChatContainer = () => {
@@ -105,12 +105,28 @@ const ChatContainer = () => {
 
                   <div className={`flex flex-col ${isOwnMessage ? "items-end" : "items-start"}`}>
                     <div
-                      className={`relative px-3 py-2 rounded-md shadow-sm max-w-full ${
+                      className={`relative px-3 py-2 rounded-md shadow-sm max-w-full group ${
                         isOwnMessage
                           ? "bg-cyan-500/10 text-white border-cyan-500/20 rounded-br-sm backdrop-blur-sm"
                           : "bg-slate-700 text-slate-100 rounded-bl-sm"
                       }`}
                     >
+                      {/* Delete button - only show for own messages */}
+                      {isOwnMessage && (
+                        <button
+                          onClick={() => {
+                            if (window.confirm("Are you sure you want to delete this message?")) {
+                              dispatch(deleteMessage(message._id))
+                            }
+                          }}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 shadow-lg"
+                          title="Delete message"
+                        >
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      )}
 
                       
                       {message.image && (

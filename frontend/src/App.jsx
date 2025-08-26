@@ -50,7 +50,7 @@ import { useAccount } from "wagmi";
 // import ActiveFreelancers from "./Components/main/ActigitveFreelancers";
 
 const App = () => {
-  const {address} = useAccount();
+  const {address,isConnected} = useAccount();
   const [authToken, setAuthToken] = useState("");
   const dispatch = useDispatch();
   const handleAuthSuccess = () => {
@@ -88,32 +88,36 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/portfolio/me" element={<Portfolio />} />
-            <Route path="/browse-jobs" element={<BrowseJobs />} />
+            <Route
+          path="*"
+          element={<Navigate to="https://crypto-lance-gamma.vercel.app/" replace />}
+          />
+            {/* <Route path="/browse-jobs" element={<BrowseJobs />} />
             <Route path="/job/:id" element={<JobDetails />} />
             <Route path="/post-job" element={<Proposal />} />
-            <Route path="/proposal" element={<Proposal />} />
-            <Route path="/freelancer/:id" element={<FreelancerProfile />} />
-            <Route path="/dashboard" element={<ClientDashboard />} />
-            <Route path="/help" element={<HelpDocs />} />
-            <Route path="/gigs" element={<Gigs />} />
-            <Route path="/adminDashboard" element={<AdminDashboard />} />
+            <Route path="/proposal" element={<Proposal />} /> */}
+            {/* <Route path="/freelancer/:id" element={<FreelancerProfile />} /> */}
+            {/* <Route path="/dashboard" element={<ClientDashboard />} /> */}
+            {/* <Route path="/help" element={<HelpDocs />} /> */}
+            {/* <Route path="/gigs" element={<Gigs />} /> */}
+            {/* <Route path="/adminDashboard" element={<AdminDashboard />} /> */}
 
-            <Route path="/jobDetails/:id" element={<JobDetails />} />
+            {/* <Route path="/jobDetails/:id" element={<JobDetails />} /> */}
             <Route
               path="/connect"
               element={<WalletConnect onAuthSuccess={handleAuthSuccess} />}
             />
             {/* <Route path="/gigpage" element={<GigPage />} /> */}
-            <Route path="/create-gig" element={<CreateGig />} />
+            {/* <Route path="/create-gig" element={<CreateGig />} />
             <Route path="/edit-gig/:id" element={<EditGig />} />
-            <Route path="/gig/:id" element={<GigPage />} />
+            <Route path="/gig/:id" element={<GigPage />} /> */}
 
-            <Route path="/adminDashboard" element={<AdminDashboard />} />
+            {/* <Route path="/adminDashboard" element={<AdminDashboard />} /> */}
             <Route path="/chatApplication" element={<ChatApp />} />
 
-            <Route path="/claimTokens" element={<ClaimTokens />} />
-            <Route path="/purchaseTokens" element={<PurchaseTokens />} />
-            <Route
+            {/* <Route path="/claimTokens" element={<ClaimTokens />} />
+            <Route path="/purchaseTokens" element={<PurchaseTokens />} /> */}
+            {/* <Route
               path="/createProposal"
               element={
                 <CreateProposalButton
@@ -135,9 +139,9 @@ const App = () => {
                   bidAmount={100000}
                 />
               }
-            />
+            /> */}
             {/* <Route path="/acceptBid" element={<AcceptBid />} /> */}
-            <Route
+            {/* <Route
               path="/depositBidAmount"
               element={
                 <DepositBidAmountButton
@@ -170,11 +174,11 @@ const App = () => {
             <Route
               path="/cancelProposal"
               element={<CancelProposalButton proposalId={25} />}
-            />
-            <Route path="/user/:id" element={<UserDetails/>}/>
-            <Route path="/portfolioForm" element={<PortfolioForm />} />
-            <Route path="/otpverification" element={<OtpVerification />} />
-            <Route path="/about" element={<About />} />
+            /> */}
+            {/* <Route path="/user/:id" element={<UserDetails/>}/> */}
+            {/* <Route path="/portfolioForm" element={<PortfolioForm />} /> */}
+            {/* <Route path="/otpverification" element={<OtpVerification />} /> */}
+            {/* <Route path="/about" element={<About />} /> */}
           </Routes>
         </Router>
         {/* Add Toaster for toast notifications */}

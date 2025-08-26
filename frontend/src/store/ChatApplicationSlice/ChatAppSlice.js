@@ -74,6 +74,17 @@ export const sendMessage = createAsyncThunk("chat/sendMessage", async ({ receive
   }
 })
 
+export const deleteMessage = createAsyncThunk("chat/deleteMessage", async (messageId, thunkAPI) => {
+  try {
+    const res = await axiosInstance.delete(`/messages/message/${messageId}`)
+    return { messageId, ...res.data }
+  } catch (err) {
+    const message = err?.response?.data?.message ?? err.message
+    toast.error(message)
+    return thunkAPI.rejectWithValue(message)
+  }
+})
+
 // Thunk to subscribe to socket's "newMessage" event
 export const subscribeToMessages = createAsyncThunk("chat/subscribeToMessages", async (_, thunkAPI) => {
   const state = thunkAPI.getState()
@@ -102,14 +113,28 @@ export const subscribeToMessages = createAsyncThunk("chat/subscribeToMessages", 
     }
   }
 
+  // Handle message deletion events
+  const deleteHandler = (deleteData) => {
+    console.log("Received message deletion via socket:", deleteData)
+    const { messageId } = deleteData
+    if (messageId) {
+      thunkAPI.dispatch(removeMessage(messageId))
+    }
+  }
+
   // Remove any existing handler
   if (socket._chatMessageHandler) {
     socket.off("newMessage", socket._chatMessageHandler)
   }
+  if (socket._chatDeleteHandler) {
+    socket.off("messageDeleted", socket._chatDeleteHandler)
+  }
 
   socket.on("newMessage", handler)
+  socket.on("messageDeleted", deleteHandler)
   socket._chatMessageHandler = handler
-  console.log("Subscribed to newMessage events")
+  socket._chatDeleteHandler = deleteHandler
+  console.log("Subscribed to newMessage and messageDeleted events")
   return true
 })
 
@@ -120,6 +145,8 @@ export const unsubscribeFromMessages = createAsyncThunk("chat/unsubscribeFromMes
   if (!socket) return thunkAPI.rejectWithValue("No socket available")
 
   const handler = socket._chatMessageHandler
+  const deleteHandler = socket._chatDeleteHandler
+  
   if (handler) {
     socket.off("newMessage", handler)
     delete socket._chatMessageHandler
@@ -127,7 +154,16 @@ export const unsubscribeFromMessages = createAsyncThunk("chat/unsubscribeFromMes
     // fallback: remove all listeners for event
     socket.off("newMessage")
   }
-  console.log("Unsubscribed from newMessage events")
+  
+  if (deleteHandler) {
+    socket.off("messageDeleted", deleteHandler)
+    delete socket._chatDeleteHandler
+  } else {
+    // fallback: remove all listeners for event
+    socket.off("messageDeleted")
+  }
+  
+  console.log("Unsubscribed from newMessage and messageDeleted events")
   return true
 })
 
@@ -215,6 +251,11 @@ const chatSlice = createSlice({
         state.selectedChatMessages[index] = realMessage
       }
     },
+    // Remove message from state
+    removeMessage(state, action) {
+      const messageId = action.payload
+      state.selectedChatMessages = state.selectedChatMessages.filter(msg => msg._id !== messageId)
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -244,6 +285,11 @@ const chatSlice = createSlice({
           }
         }
       })
+      .addCase(deleteMessage.fulfilled, (state, action) => {
+        // Remove the deleted message from state
+        const messageId = action.payload.messageId
+        state.selectedChatMessages = state.selectedChatMessages.filter(msg => msg._id !== messageId)
+      })
   }
 })
 
@@ -256,5 +302,6 @@ export const {
   removeOptimisticMessage,
   setChatMessages,
   updateOptimisticMessage,
+  removeMessage,
 } = chatSlice.actions
 export default chatSlice.reducer
