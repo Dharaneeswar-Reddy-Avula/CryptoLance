@@ -79,6 +79,10 @@ const App = () => {
     setAuthToken(token);
     console.log(token);
   }, [dispatch]);
+  function RedirectToExternal() {
+  window.location.href = "https://crypto-lance-gamma.vercel.app/";
+  return null;
+}
 
   return (
     <>
@@ -90,7 +94,7 @@ const App = () => {
             <Route path="/portfolio/me" element={<Portfolio />} />
             <Route
           path="*"
-          element={<Navigate to="https://crypto-lance-gamma.vercel.app/" replace />}
+          element={<RedirectToExternal />}
           />
             {/* <Route path="/browse-jobs" element={<BrowseJobs />} />
             <Route path="/job/:id" element={<JobDetails />} />
