@@ -269,9 +269,7 @@ const Sidebar = () => {
           <div className="p-2 bg-cyan-500/20 rounded-lg">
             <Users className="size-5 text-cyan-400" />
           </div>
-          <span className="font-medium text-lg block text-white">
-            Contacts
-          </span>
+          <span className="font-medium text-lg block text-white">Contacts</span>
           <div className="ml-auto flex items-center gap-1">
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
             <span className="text-xs text-slate-400">
@@ -292,8 +290,15 @@ const Sidebar = () => {
         </div>
 
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-sm text-slate-400 flex items-center gap-2"><FaArrowLeftLong />
- Back to Home</Link>
+          <Link
+            to="#"
+            onClick={() =>
+              (window.location.href = "https://crypto-lance-gamma.vercel.app/")
+            }
+            className="text-sm text-slate-400 flex items-center gap-2"
+          >
+            <FaArrowLeftLong /> Back to Home
+          </Link>
 
           <label className="cursor-pointer flex items-center gap-2 group">
             <div className="relative">

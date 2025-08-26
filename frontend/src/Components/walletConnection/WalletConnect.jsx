@@ -9,6 +9,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./star.css";
+import { Link } from "react-router-dom";
+import { FaArrowLeftLong } from "react-icons/fa6";
 function WalletConnect({ onAuthSuccess }) {
   const { address, isConnected, chain, status } = useAccount();
   const { signMessageAsync } = useSignMessage();
@@ -271,6 +273,15 @@ function WalletConnect({ onAuthSuccess }) {
           <div id="stars4"></div>
         </div>
 <div className="relative z-10 flex gap-3 flex-col items-center ">
+    <Link
+              to="#"
+              onClick={() =>
+                (window.location.href = "https://crypto-lance-gamma.vercel.app/")
+              }
+              className="text-sm text-slate-400 flex items-center gap-2"
+            >
+              <FaArrowLeftLong /> Back to Home
+            </Link>
      <w3m-button />
      {isConnected ? (
 <div className="mt-[20px] text-sm text-white cursor-pointer bg-cyan-500/90 backdrop-blur-lg  p-3 rounded-full" onClick={() => navigate("/chatApplication")}>
