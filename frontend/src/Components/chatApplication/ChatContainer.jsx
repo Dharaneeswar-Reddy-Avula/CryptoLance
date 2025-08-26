@@ -9,16 +9,132 @@ import { getMessages, deleteMessage } from "../../store/ChatApplicationSlice/Cha
 import { formatMessageTime } from "./MessageTime"
 
 const ChatContainer = () => {
-  const { selectedChatMessages: messages, selectedChatData: selectedUser } = useSelector((state) => state.chat)
+  const { selectedChatMessages: messages, selectedChatData: selectedUser, directMessagesContacts } = useSelector((state) => state.chat)
   const { user: authUser } = useSelector((state) => state.auth)
   const [isMessagesLoading, setIsMessagesLoading] = useState(false)
+  
+  const dispatch = useDispatch()
+  const messageEndRef = useRef(null)
+
+  // Get the complete user data for the selected user
+  const completeSelectedUser = directMessagesContacts?.find(user => user._id === selectedUser?._id) || selectedUser
+
+  // Debug: Check if we're finding the user correctly
+  console.log("ChatContainer - User ID comparison:")
+  console.log("  selectedUser._id:", selectedUser?._id)
+  console.log("  directMessagesContacts IDs:", directMessagesContacts?.map(u => u._id))
+  console.log("  Found user:", directMessagesContacts?.find(user => user._id === selectedUser?._id))
+  console.log("  completeSelectedUser:", completeSelectedUser)
+
+  // Helper function to validate profile URL
+  const isValidProfileUrl = (url) => {
+    if (!url || typeof url !== 'string') return false
+    const trimmedUrl = url.trim()
+    if (trimmedUrl === '') return false
+    
+    // Check if it's a valid URL or data URL
+    try {
+      if (trimmedUrl.startsWith('data:')) return true
+      if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) return true
+      if (trimmedUrl.startsWith('/')) return true
+      return false
+    } catch {
+      return false
+    }
+  }
+
+  // Helper function to normalize profile URL
+  const normalizeProfileUrl = (url) => {
+    if (!url || typeof url !== 'string') return null
+    const trimmedUrl = url.trim()
+    if (trimmedUrl === '') return null
+    
+    // If it's already a full URL, return as is
+    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+      return trimmedUrl
+    }
+    
+    // If it's a data URL, return as is
+    if (trimmedUrl.startsWith('data:')) {
+      return trimmedUrl
+    }
+    
+    // If it's a relative path starting with /, add base URL
+    if (trimmedUrl.startsWith('/')) {
+      return `https://cryptolance-qgzz.onrender.com${trimmedUrl}`
+    }
+    
+    // If it's just a filename or relative path, add base URL
+    return `https://cryptolance-qgzz.onrender.com/uploads/${trimmedUrl}`
+  }
+
+  // Helper function to render profile image or fallback
+  const renderProfileImage = (user, isOwnMessage) => {
+    if (isOwnMessage) {
+      // For own messages, use authUser data
+      const normalizedProfileUrl = normalizeProfileUrl(authUser?.profile)
+      if (normalizedProfileUrl) {
+        return (
+          <img 
+            src={normalizedProfileUrl} 
+            alt="profile" 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              console.warn('Failed to load own profile image:', normalizedProfileUrl)
+              e.target.style.display = 'none'
+              e.target.nextSibling.style.display = 'flex'
+            }}
+          />
+        )
+      } else {
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-cyan-600 text-white font-semibold text-sm">
+            {authUser?.name?.charAt(0)?.toUpperCase() || authUser?.fullname?.charAt(0)?.toUpperCase() || "U"}
+          </div>
+        )
+      }
+    } else {
+      // For other user messages, use completeSelectedUser data
+      const normalizedProfileUrl = normalizeProfileUrl(completeSelectedUser?.profile)
+      if (normalizedProfileUrl) {
+        return (
+          <img 
+            src={normalizedProfileUrl} 
+            alt="profile" 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              console.warn('Failed to load other user profile image:', normalizedProfileUrl)
+              e.target.style.display = 'none'
+              e.target.nextSibling.style.display = 'flex'
+            }}
+          />
+        )
+      } else {
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-slate-600 text-white font-semibold text-sm">
+            {completeSelectedUser?.fullname?.charAt(0)?.toUpperCase() || "U"}
+          </div>
+        )
+      }
+    }
+  }
   
   console.log("ChatContainer - authUser:", authUser)
   console.log("ChatContainer - messages:", messages)
   console.log("ChatContainer - selectedUser:", selectedUser)
-  
-  const dispatch = useDispatch()
-  const messageEndRef = useRef(null)
+  console.log("ChatContainer - directMessagesContacts:", directMessagesContacts)
+  console.log("ChatContainer - completeSelectedUser:", completeSelectedUser)
+  console.log("ChatContainer - authUser profile:", authUser?.profile)
+  console.log("ChatContainer - completeSelectedUser profile:", completeSelectedUser?.profile)
+  console.log("ChatContainer - authUser name:", authUser?.name)
+  console.log("ChatContainer - authUser fullname:", authUser?.fullname)
+  console.log("ChatContainer - completeSelectedUser fullname:", completeSelectedUser?.fullname)
+  console.log("ChatContainer - authUser _id:", authUser?._id)
+  console.log("ChatContainer - completeSelectedUser _id:", completeSelectedUser?._id)
+  console.log("ChatContainer - isValidProfileUrl(authUser?.profile):", isValidProfileUrl(authUser?.profile))
+  console.log("ChatContainer - isValidProfileUrl(completeSelectedUser?.profile):", isValidProfileUrl(completeSelectedUser?.profile))
+  console.log("ChatContainer - normalizeProfileUrl(authUser?.profile):", normalizeProfileUrl(authUser?.profile))
+  console.log("ChatContainer - normalizeProfileUrl(completeSelectedUser?.profile):", normalizeProfileUrl(completeSelectedUser?.profile))
 
   useEffect(() => {
     if (selectedUser) {
@@ -32,31 +148,6 @@ const ChatContainer = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
   }, [messages])
-
-  // Helper function to render profile image or fallback
-  const renderProfileImage = (user, isOwnMessage) => {
-    if (isOwnMessage) {
-      if (authUser?.profile) {
-        return <img src={authUser.profile} alt="profile" className="w-full h-full object-cover" />
-      } else {
-        return (
-          <div className="w-full h-full flex items-center justify-center bg-cyan-600 text-white font-semibold text-sm">
-            {authUser?.fullname?.charAt(0)?.toUpperCase() || authUser?.name?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-        )
-      }
-    } else {
-      if (selectedUser?.profile) {
-        return <img src={selectedUser.profile} alt="profile" className="w-full h-full object-cover" />
-      } else {
-        return (
-          <div className="w-full h-full flex items-center justify-center bg-slate-600 text-white font-semibold text-sm">
-            {selectedUser?.fullname?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-        )
-      }
-    }
-  }
 
   if (isMessagesLoading) {
     return (
